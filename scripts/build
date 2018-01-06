@@ -29,5 +29,5 @@ VBoxManage storageattach $VM_NAME \
     --medium ${DIST_DIR}/build/BOOT.img
 
 VBoxManage controlvm $VM_NAME poweroff
-sleep 5
+sleep 1
 VBoxManage startvm $VM_NAME
