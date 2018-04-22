@@ -2,14 +2,14 @@
 
 DIR=$(cd $(dirname "$0") && pwd)
 
-source $DIR/setup.sh
+source ${DIR}/setup.sh
 
 ASM_FILES=$(ls ./src/ch-$1/*.asm)
 
-rm -rf $DIST_DIR/build && mkdir $DIST_DIR/build
+rm -rf ${DIST_DIR}/build && mkdir ${DIST_DIR}/build
 
-for ASM_FILE in $ASM_FILES; do
-  nasm -f bin -o ${DIST_DIR}/build/$(basename $ASM_FILE).img $ASM_FILE
+for ASM_FILE in ${ASM_FILES}; do
+  nasm -f bin -o ${DIST_DIR}/build/$(basename ${ASM_FILE}).img ${ASM_FILE}
 done
 
 IMG_FILES=$(ls ${DIST_DIR}/build/*.img)

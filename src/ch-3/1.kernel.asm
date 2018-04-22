@@ -75,20 +75,32 @@ gdt:
   db 0
 
 SysCodeSelector equ 0x08
-  dw 0xffff
-  dw 0x0000
-  db 0x01
-  db 0x9a
-  db 0xcf
-  db 0x00
+  dw 0xffff   
+  ; 1111 1111 1111 1111  LIMIT(15~0)
+  dw 0x0000   
+  ; 0000 0000 0000 0000  BASE 15~0
+  db 0x01     
+  ; 0000 0001            BASE 23~16
+  db 0x9a     
+  ; 1001 1010            P(isPresents)=1, DPL(Data Protection Level)=00, S(isSegment)=1, Type[1(Code), 0(None Confirm), 1(Readable), 0(Access)]
+  db 0xcf     
+  ; 1101 1111            G(unit==>byte of 4KB)=1(4KB), D=1(32bit code), 0, AVL=1, LIMIT(16~19)=1111
+  db 0x00     
+  ; BASE 31~24
 
 SysDataSelector equ 0x10
   dw 0xffff
+  ; 1111 1111 1111 1111 LiMIT
   dw 0x0000
+  ; 0000 0000 0000 0000 Base
   db 0x01
+  ; 0000 0001           Base
   db 0x92
+  ; 1001 0010           P=1, DPL=00, S=1, Type[data, expand up, writable, not accessing]
   db 0xcf
+  ; 1101 1111           G=1, D=1, 0, AVL=1, LIMIT=1111
   db 0x00
+  ; 0000 0000           Base
 
 VideoSelector equ 0x18
   dw 0xffff

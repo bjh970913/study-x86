@@ -3,7 +3,7 @@ CHDIR=$(pwd)
 DIR=$(cd $(dirname "$0") && pwd)
 
 TOOLS_DIR=$DIR"/../tools"
-DIST_DIR=$DIR/../dist
+export DIST_DIR=$DIR/../dist
 
 mkdir $DIST_DIR 2>&-
 cd $DIST_DIR
