@@ -4,7 +4,9 @@ DIR=$(cd $(dirname "$0") && pwd)
 
 source ${DIR}/setup.sh
 
-ASM_FILES=$(ls ./src/ch-$1/*.asm)
+pushd ./src/ch-${1}
+
+ASM_FILES=$(ls ./*.asm)
 
 rm -rf ${DIST_DIR}/build && mkdir ${DIST_DIR}/build
 
@@ -31,3 +33,5 @@ VBoxManage storageattach $VM_NAME \
 VBoxManage controlvm $VM_NAME poweroff
 sleep 1
 VBoxManage startvm $VM_NAME
+
+popd
