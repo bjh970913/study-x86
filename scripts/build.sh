@@ -1,37 +1,58 @@
 #!/usr/bin/env bash
 
-DIR=$(cd $(dirname "$0") && pwd)
+VBOX_ENV_NAME="x86_study"
 
-source ${DIR}/setup.sh
+SCRIPT_DIR=$(cd $(dirname "$0") && pwd)
+ROOT_DIR=${SCRIPT_DIR}/..
+export BUILD_DIR=${ROOT_DIR}/build
+export BUILD_RESULT=${BUILD_DIR}/image.img
+TOOLS_DIR=${SCRIPT_DIR}/../tools
+TOOLS_OVA=${TOOLS_DIR}/x86_barebone.ova
 
-pushd ./src/ch-${1}
+mkdir -p ${BUILD_DIR}
 
-ASM_FILES=$(ls ./*.asm)
+if [ $# != 1 ]; then
+    echo "Usage build.sh [target dir]"
+    exit 1
+else
+    TARGET_DIR=$1
+fi
 
-rm -rf ${DIST_DIR}/build && mkdir ${DIST_DIR}/build
+NASM=$(which nasm)
+VBOX=$(which VBoxManage)
 
-for ASM_FILE in ${ASM_FILES}; do
-  nasm -f bin -o ${DIST_DIR}/build/$(basename ${ASM_FILE}).img ${ASM_FILE}
-done
+if [ "${NASM}" == "" ]; then
+    echo "Package nasm not found"
+    exit 1
+fi
 
-IMG_FILES=$(ls ${DIST_DIR}/build/*.img)
+if [ "${VBOX}" == "" ]; then
+    echo "Package VBox not found"
+    exit 1
+fi
 
-touch ${DIST_DIR}/build/BOOT.img
+VBoxManage import ${TOOLS_OVA} --vsys 0 --vmname ${VBOX_ENV_NAME} 1>&- 2>&-
 
-for IMG in $IMG_FILES; do
-  cat $IMG >> ${DIST_DIR}/build/BOOT.img
-done
+rm ${BUILD_RESULT}
 
-VM_NAME=x86_study
+pushd ${TARGET_DIR}
 
-# VBoxManage storagectl
-
-VBoxManage storageattach $VM_NAME \
-    --storagectl Floppy --device 0 --port 0 --port 0 \
-    --medium ${DIST_DIR}/build/BOOT.img
-
-VBoxManage controlvm $VM_NAME poweroff
-sleep 1
-VBoxManage startvm $VM_NAME
+make
+make clean
 
 popd
+
+if [ ! -f ${BUILD_RESULT} ]; then
+    echo "Build image not found. Check makefile"
+    exit 1
+fi
+
+VBoxManage storageattach ${VBOX_ENV_NAME} \
+    --storagectl Floppy --device 0 --port 0 --port 0 \
+    --medium ${BUILD_RESULT}
+
+VBoxManage controlvm ${VBOX_ENV_NAME} poweroff
+
+sleep 1
+
+VBoxManage startvm ${VBOX_ENV_NAME}

@@ -1,3 +1,4 @@
 dist/
 *.img
 .idea
+build
