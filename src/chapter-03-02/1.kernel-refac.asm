@@ -37,7 +37,7 @@ printf_end:
     pop eax
     ret
 
-msgPMode db "We are in Protected Mode with refactored asm 2", 0
+msgPMode db "We are in Protected Mode with nasm featured source", 0
 
 times 510- ( $ - $$ ) db 0
 dw 0aa55h

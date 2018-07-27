@@ -60,7 +60,7 @@ printf_end:
   pop eax
   ret
 
-msgPMode db "We are in Protected Mode", 0
+msgPMode db "We are in Protected Mode with legacy mode transition", 0
 
 gdtr:
   dw gdt_end - gdt - 1
@@ -112,4 +112,4 @@ VideoSelector equ 0x18
 
 gdt_end:
 
-times (512 * 1024)-($-$$) db 0
+times 1024-($-$$) db 0
