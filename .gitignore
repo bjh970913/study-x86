@@ -1,5 +1,5 @@
 dist/
 *.img
 .idea
-build
+build/
 *.o
