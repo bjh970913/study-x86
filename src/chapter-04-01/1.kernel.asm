@@ -11,7 +11,7 @@ PM_Start:
     mov gs, bx
     mov ss, bx
 
-    lea esp, [PM_Start]
+    lea esp, [PM_Start]     ; PM 이전에 CPU 마다 다른값이 들어 있을 수 있음. 따라서 초기화
 
     mov edi, 0
     lea esi, [msgPMode]
@@ -34,8 +34,8 @@ loop_idt:
 
     lidt [idtr]
 
-    sti
-    int 0x66
+    sti             ; 인터럽트 활성화
+    int 0x66        ; 인터럽트 발생
     jmp $
 
 printf:

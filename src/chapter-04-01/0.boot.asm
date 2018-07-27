@@ -40,6 +40,9 @@ read:
     out dx, al
 
     cli
+    mov al, 0xff
+    out 0xa1, al
+
     lgdt[gdtr]
 
     mov eax, cr0
