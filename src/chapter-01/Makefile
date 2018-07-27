@@ -1,14 +1,12 @@
-all: ${BUILD_RESULT}
+OBJECTS = 0.boot.o 1.boot.o
 
-${BUILD_RESULT}: 0.boot.img 1.boot.img
-	echo $^
-	cat $^  >> ${BUILD_RESULT}
 
-0.boot.img: 0.boot.asm
+.SUFFIXES : .asm .o
+.asm.o :
 	nasm -o $@ $^
+TARGET = ${BUILD_RESULT}
+$(TARGET) : $(OBJECTS)
+	rm $@; cat $^ >> $@
 
-1.boot.img: 1.boot.asm
-	nasm -o $@ $^
-
-clean: all
-	rm -rf *.img
+clean :
+	rm -rf $(OBJECTS)
