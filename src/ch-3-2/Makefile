@@ -1,13 +1,12 @@
-all: ${BUILD_RESULT}
+OBJECTS = 0.boot-refac.o 1.kernel-refac.o
 
-${BUILD_RESULT}: 0.boot.img 1.kernal.img
-	cat $^  >> ${BUILD_RESULT}
 
-0.boot.img: 0.boot-refac.asm
+.SUFFIXES : .asm .o
+.asm.o :
 	nasm -o $@ $^
+TARGET = ${BUILD_RESULT}
+$(TARGET) : $(OBJECTS)
+	rm $@; cat $^ >> $@
 
-1.kernal.img: 1.kernel-refac.asm
-	nasm -o $@ $^
-
-clean: all
-	rm -rf *.img
+clean :
+	rm -rf $(OBJECTS)

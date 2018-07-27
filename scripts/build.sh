@@ -38,7 +38,6 @@ rm ${BUILD_RESULT}
 pushd ${TARGET_DIR}
 
 make
-make clean
 
 popd
 
