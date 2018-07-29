@@ -41,8 +41,6 @@ read:
 
     cli
 
-
-
     mov al, 0xff
     out 0xa1, al
 
