@@ -36,10 +36,14 @@ loop_idt:
     mov cx, 8
     rep movsb
 
+    mov edi, 8*0x21
+    lea esi, [idt_keyboard]
+    mov cx, 8
+    rep movsb
+
     lidt [idtr]
 
-    mov al, 0xfe  ;; OCW(1) 11111110 -> Allow IRQ#0 (which is timer)
-    ;; mov al, 0xfd  ;; OCW(1) 11111100 -> Allow IRQ#1 (which is keyboard)
+    mov al, 0xc  ;; OCW(1) 11111100 -> Allow IRQ#1 (which is keyboard)
     out 0x21, al
 
     sti             ; 인터럽트 활성화
@@ -69,6 +73,7 @@ printf_end:
 msgPMode db "We are in Protected Mode", 0
 msg_isr_ignore db "This is an ignorable interrupt", 0
 msg_isr_32_timer db "A_This is the timer interrupt", 0
+msg_isr_33_keyboard db "A_This Keyboard interrupt", 0
 
 idtr:
     dw 256*8-1
@@ -132,6 +137,36 @@ isr_32_timer:
 
     iret
 
+isr_33_keyboard:
+    push gs
+    push fs
+    push es
+    push ds
+    pushad
+    pushfd
+
+    in al, 0x60
+    mov byte [msg_isr_33_keyboard], al
+
+    mov al, 0x20
+    out 0x20, al
+
+    mov ax, VideoSelector
+    mov es, ax
+    mov edi, (80*2 * 6)
+    lea esi, [msg_isr_33_keyboard]
+    ; inc byte [msg_isr_33_keyboard]
+    call printf
+
+    popfd
+    popad
+    pop ds
+    pop es
+    pop fs
+    pop gs
+
+    iret
+
 ;************************************
 ;***             IDT              ***
 ;************************************
@@ -145,6 +180,13 @@ idt_ignore:
 
 idt_timer:
     dw isr_32_timer
+    dw SysCodeSelector
+    db 0
+    db 0x8e
+    dw 0x0001
+
+idt_keyboard:
+    dw isr_33_keyboard
     dw SysCodeSelector
     db 0
     db 0x8e
