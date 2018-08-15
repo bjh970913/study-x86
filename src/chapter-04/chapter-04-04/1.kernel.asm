@@ -41,12 +41,22 @@ loop_idt:
     mov cx, 8
     rep movsb
 
+    mov edi, 0
+    lea esi, [idt_zero_division]
+    mov cx, 8
+    rep movsb
+
     lidt [idtr]
 
     mov al, 0xfc  ;; OCW(1) 11111100 -> Allow IRQ#1 (which is keyboard)
     out 0x21, al
 
     sti             ; 인터럽트 활성화
+
+    mov edx, 0
+    mov eax, 0x100
+    mov ebx, 0
+    div ebx
 
     jmp $
 
@@ -72,6 +82,7 @@ printf_end:
 
 msgPMode db "We are in Protected Mode", 0
 msg_isr_ignore db "This is an ignorable interrupt", 0
+msg_isr_00_zero_division db "Zero division error!!", 0
 msg_isr_32_timer db "A_This is the timer interrupt", 0
 msg_isr_33_keyboard db "A_This Keyboard interrupt", 0
 
@@ -99,6 +110,33 @@ isr_ignore:
     mov es, ax
     mov edi, (80*2 * 2)
     lea esi, [msg_isr_ignore]
+    call printf
+
+    popfd
+    popad
+    pop ds
+    pop es
+    pop fs
+    pop gs
+
+    iret
+
+
+isr_00_zero_division:
+    push gs
+    push fs
+    push es
+    push ds
+    pushad
+    pushfd
+
+    mov al, 0x20
+    out 0x20, al
+
+    mov ax, VideoSelector
+    mov es, ax
+    mov edi, (80*2 * 8)
+    lea esi, [msg_isr_00_zero_division]
     call printf
 
     popfd
@@ -178,6 +216,13 @@ idt_ignore:
     db 0x8e
     dw 0x0001
 
+idt_zero_division:
+    dw isr_00_zero_division
+    dw SysCodeSelector
+    db 0
+    db 0x8e
+    dw 0x0001
+
 idt_timer:
     dw isr_32_timer
     dw SysCodeSelector
@@ -192,4 +237,4 @@ idt_keyboard:
     db 0x8e
     dw 0x0001
 
-times 512 - ( $ - $$ ) db 0
+times 512*2 - ( $ - $$ ) db 0
