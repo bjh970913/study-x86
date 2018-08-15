@@ -38,9 +38,10 @@ loop_idt:
 
     lidt [idtr]
 
-
-    mov al, 0xfe
+    mov al, 0xfe  ;; OCW(1) 11111110 -> Allow IRQ#0 (which is timer)
+    ;; mov al, 0xfd  ;; OCW(1) 11111100 -> Allow IRQ#1 (which is keyboard)
     out 0x21, al
+
     sti             ; 인터럽트 활성화
 
     jmp $
@@ -67,7 +68,7 @@ printf_end:
 
 msgPMode db "We are in Protected Mode", 0
 msg_isr_ignore db "This is an ignorable interrupt", 0
-msg_isr_32_timer db ".This is the timer interrupt", 0
+msg_isr_32_timer db "A_This is the timer interrupt", 0
 
 idtr:
     dw 256*8-1
@@ -111,7 +112,7 @@ isr_32_timer:
 
     mov ax, VideoSelector
     mov es, ax
-    mov edi, (80*2 * 2)
+    mov edi, (80*2 * 4)
     lea esi, [msg_isr_32_timer]
     inc byte [msg_isr_32_timer]
     call printf
