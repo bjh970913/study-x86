@@ -100,7 +100,7 @@ a20_test_wait:
     mov word [fs:A20_TEST_ADDR], ax; 0000:0100 <<< ax+1
     call delay
     cmp ax, word [gs:A20_TEST_ADDR + 0x10] ; ffff:0100 + 0x10 ; 1_00100 => a20_down => overwrap, a2_on => not overwrap
-    loop a20_test_wait
+    loopz a20_test_wait
 
     pop word [fs:A20_TEST_ADDR]
     pop ax
@@ -121,7 +121,6 @@ empty_8042_loop:
     call delay
     in al, 0x60
     jmp empty_8042_loop
-
 no_output:
     test al, 2
     jnz empty_8042_loop

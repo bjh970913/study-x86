@@ -23,7 +23,7 @@ paint:
     dec cx
     jnz paint
 
-    ; call a20_try_loop
+    call a20_try_loop
 
     push ds
     mov ax, 0
