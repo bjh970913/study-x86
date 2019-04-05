@@ -1,9 +1,9 @@
 %include "init.inc"
 
-PAGE_DIR        equ 0x100000
-PAGE_TAB_KERNEL equ 0x101000
-PAGE_TAB_USER   equ 0x102000
-PAGE_TAB_LOW    equ 0x103000
+PAGE_DIR        equ 0x100000 ; 00000:0x100000
+PAGE_TAB_KERNEL equ 0x101000 ; 00000:0x101000
+PAGE_TAB_USER   equ 0x102000 ; 00000:0x102000
+PAGE_TAB_LOW    equ 0x103000 ; 00000:0x103000
 
 [org 0x90000]
 [bits 16]
@@ -46,13 +46,11 @@ PM_Start:
     mov fs, bx
     mov gs, bx
     mov ss, bx
-
     lea esp, [PM_Start]
 
     mov esi, 0x80000
     mov edi, 0x200000
     mov cx, 512*7
-
 kernel_copy:
     mov al, byte[ds:esi]
     mov byte[es:edi], al
@@ -116,77 +114,77 @@ user5_copy:
     dec cx
     jnz user5_copy
 
-    mov edi, PAGE_DIR
+    mov edi, PAGE_DIR                   ; 디렉터리를 모두 0으로 설정 ; int dir[1024];
     mov eax, 0
     mov ecx, 1024
     cld
     rep stosd
 
-    mov edi, PAGE_DIR
+    mov edi, PAGE_DIR                   ; dir[0] = 0x103000 (PAGE_TAB_LOW)
     mov eax, 0x103000
     or eax, 0x01
     mov [es:edi], eax
 
-    mov edi, PAGE_DIR+0x200*4
+    mov edi, PAGE_DIR+0x200*4           ; dir[512] = 0x102000 (PAGE_TAB_USER)
     mov eax, 0x102000
     or eax, 0x07
     mov [es:edi], eax
 
-    mov edi, PAGE_DIR+0x300*4
+    mov edi, PAGE_DIR+0x300*4           ; dir[768] = 0x10100 (PAGE_TAB_KERNEL)
     mov eax, 0x101000
     or eax, 0x01
     mov [es:edi], eax
 
-    mov edi, PAGE_TAB_KERNEL
+    mov edi, PAGE_TAB_KERNEL            ; 커널 탭을 모두 0으로 설정 ; int pt_kernel[1024];
     mov eax, 0
     mov ecx, 1024
     cld
     rep stosd
 
-    mov edi, PAGE_TAB_KERNEL+0x000*4
+    mov edi, PAGE_TAB_KERNEL+0x000*4    ; pt_kernel[0] = 0x200000
     mov eax, 0x200000
-    or eax, 1
+    or eax, 1                           ; P=>1
     mov [es:edi], eax
 
-    mov edi, PAGE_TAB_KERNEL+0x001*4
+    mov edi, PAGE_TAB_KERNEL+0x001*4    ; pt_kernel[1] = 0x201000
     mov eax, 0x201000
-    or eax, 1
+    or eax, 1                           ; P=>1
     mov [es:edi], eax
 
-    mov edi, PAGE_TAB_USER
+    mov edi, PAGE_TAB_USER              ; 유저 탭을 모두 0으로 설정 ; int pt_user[1024];
     mov eax, 0x00
     mov ecx, 1024
     cld
     rep stosd
 
-    mov edi, PAGE_TAB_USER+0x000*4
+    mov edi, PAGE_TAB_USER+0x000*4      ; pt_user[0] = 0x300000 ; USER 1
     mov eax, 0x300000
-    or eax, 0x07
+    or eax, 0x07                        ; 000000000111 => U/S=1, R/W=1, P=1
     mov [es:edi], eax
 
-    mov edi, PAGE_TAB_USER+0x001*4
+    mov edi, PAGE_TAB_USER+0x001*4      ; pt_user[0] = 0x301000 ; USER 2
     mov eax, 0x301000
-    or eax, 0x07
+    or eax, 0x07                        ; 000000000111 => U/S=1, R/W=1, P=1
     mov [es:edi], eax
 
-    mov edi, PAGE_TAB_USER+0x002*4
+    mov edi, PAGE_TAB_USER+0x002*4      ; pt_user[0] = 0x302000 ; USER 3
     mov eax, 0x302000
-    or eax, 0x07
+    or eax, 0x07                        ; 000000000111 => U/S=1, R/W=1, P=1
     mov [es:edi], eax
 
-    mov edi, PAGE_TAB_USER+0x003*4
+    mov edi, PAGE_TAB_USER+0x003*4      ; pt_user[0] = 0x303000 ; USER 4
     mov eax, 0x303000
-    or eax, 0x07
+    or eax, 0x07                        ; 000000000111 => U/S=1, R/W=1, P=1
     mov [es:edi], eax
 
-    mov edi, PAGE_TAB_USER+0x004*4
+    mov edi, PAGE_TAB_USER+0x004*4      ; pt_user[0] = 0x304000 ; USER 5
     mov eax, 0x304000
-    or eax, 0x07
+    or eax, 0x07                        ; 000000000111 => U/S=1, R/W=1, P=1
     mov [es:edi], eax
 
-    mov edi, PAGE_TAB_LOW
+    mov edi, PAGE_TAB_LOW               ; 0x0 ~ 0x1ff000 구간을 지정
     mov eax, 0x00000
-    or eax, 0x01
+    or eax, 0x01                        ; P=1
     mov cx, 256
 page_low_loop:
     mov [es:edi], eax
@@ -198,14 +196,18 @@ page_low_loop:
     lea eax, [tss_esp0]
     mov [TSS_ESP0_WHERE], eax
 
-    mov eax, PAGE_DIR
+    mov eax, PAGE_DIR                   ; 페이지 디렉터리 위치 지정
     mov cr3, eax
 
-    mov eax, cr0
+    mov eax, cr0                        ; 페이징 사용
     or eax, 0x80000000
     mov cr0, eax
 
-    jmp 0xC0000000
+    jmp 0xC0000000                      ; 1100 0000 00 | 00 0000 0000 | 0000 0000 0000
+                                        ; 11 0000 0000 | 00 0000 0000 | 0000 0000 0000
+                                        ; dir[0x300]   | tab[0]       | 0
+                                        ; TAB_KERNEL   | 0x200000     | 0
+                                        ; jmp to kernel at 0x200000:0
 
 gdtr:
     dw gdt_end-gdt-1
@@ -213,11 +215,11 @@ gdtr:
 
 gdt:
     dd 0,0
-    dd 0x0000ffff, 0x00cf9a00
-    dd 0x0000ffff, 0x00cf9200
-    dd 0x8000ffff, 0x0040920b
+    dd 0x0000ffff, 0x00cf9a00 ; SYS CODE ; BASE=00000000
+    dd 0x0000ffff, 0x00cf9200 ; SYS DATA ; BASE=00000000
+    dd 0x8000ffff, 0x0040920b ; VIDEO    ; BASE=000b8000
 
-descriptor4:
+descriptor4: ; TSS
     dw 104
     dw 0
     db 0
@@ -225,8 +227,8 @@ descriptor4:
     db 0
     db 0
 
-    dd 0x0000ffff, 0x00fcfa00
-    dd 0x0000ffff, 0x00fcf200
+    dd 0x0000ffff, 0x00fcfa00 ; USER CODE ; BASE=00000000
+    dd 0x0000ffff, 0x00fcf200 ; USER DATA ; BASE=00000000
 gdt_end:
 
 tss:
