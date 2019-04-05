@@ -457,7 +457,7 @@ isr_33_keyboard:
     mov fs, ax
     mov gs, ax
 
-    in	al,0x60
+    in al,0x60
     mov al, 0x20
     out 0x20, al
 

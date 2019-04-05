@@ -2,10 +2,10 @@ OBJECTS = boot_paging.o setup.o kernel_paging.o user_program1.o user_program2.o 
 
 .SUFFIXES : .asm .o
 .asm.o :
-	nasm -o $@ $^
+    nasm -o $@ $^
 TARGET = ${BUILD_RESULT}
 $(TARGET) : $(OBJECTS)
-	rm $@; cat $^ >> $@
+    rm $@; cat $^ >> $@
 
 clean :
-	rm -rf $(OBJECTS)
+    rm -rf $(OBJECTS)
