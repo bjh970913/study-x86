@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+source $(dirname "$0")/env.sh
+
+mkdir -p ${BUILD_DIR}
+
+if [ $# != 1 ]; then
+    echo "Usage $0 [target dir]"
+    exit 1
+else
+    TARGET_DIR=$1
+fi
+
+rm -rf build
+cp -r ${TARGET_DIR} ${BUILD_DIR}
+
+docker run -it --rm \
+    -v ${BUILD_DIR}:/study_src \
+    -e BUILD_RESULT=image.img \
+    --entrypoint "" \
+    study_x86_builder /bin/bash

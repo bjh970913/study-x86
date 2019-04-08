@@ -1,11 +1,16 @@
-OBJECTS = exam_C1.o
+OBJECTS = exam.o exam.run
 
 .SUFFIXES : .asm .o
+.SUFFIXES : .c .o
+
 .asm.o :
-    nasm -o $@ $^
+	nasm -o $@ $^
+.c.o:
+	gcc -c $^ -o $@
+
 TARGET = ${BUILD_RESULT}
 $(TARGET) : $(OBJECTS)
-    rm $@; cat $^ >> $@
+	rm $@; cat $^ >> $@
 
 clean :
-    rm -rf $(OBJECTS)
+	rm -rf $(OBJECTS)

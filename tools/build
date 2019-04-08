@@ -1,46 +1,26 @@
 #!/usr/bin/env bash
 
-VBOX_ENV_NAME="x86_study"
-
-SCRIPT_DIR=$(cd $(dirname "$0") && pwd)
-ROOT_DIR=${SCRIPT_DIR}/..
-export BUILD_DIR=${ROOT_DIR}/build
-export BUILD_RESULT=${BUILD_DIR}/image.img
-TOOLS_DIR=${SCRIPT_DIR}/../tools
-TOOLS_OVA=${TOOLS_DIR}/x86_barebone.ova
+source $(dirname "$0")/env.sh
 
 mkdir -p ${BUILD_DIR}
 
 if [ $# != 1 ]; then
-    echo "Usage build.sh [target dir]"
+    echo "Usage $0 [target dir]"
     exit 1
 else
     TARGET_DIR=$1
 fi
 
-NASM=$(which nasm)
-VBOX=$(which VBoxManage)
+require pre_vbox.sh
+require pre_docker.sh
 
-if [ "${NASM}" == "" ]; then
-    echo "Package nasm not found"
-    exit 1
-fi
+rm -rf build
 
-if [ "${VBOX}" == "" ]; then
-    echo "Package VBox not found"
-    exit 1
-fi
+env
 
-VBoxManage import ${TOOLS_OVA} --vsys 0 --vmname ${VBOX_ENV_NAME} 1>&- 2>&-
+cp -r ${TARGET_DIR} ${BUILD_DIR}
 
-rm ${BUILD_RESULT}
-
-pushd ${TARGET_DIR}
-
-make
-make clean
-
-popd
+docker run -it --rm -v ${BUILD_DIR}:/study_src -e BUILD_RESULT=image.img study_x86_builder /bin/sh
 
 if [ ! -f ${BUILD_RESULT} ]; then
     echo "Build image not found. Check makefile"
