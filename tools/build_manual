@@ -11,6 +11,8 @@ else
     TARGET_DIR=$1
 fi
 
+require pre_docker.sh
+
 rm -rf build
 cp -r ${TARGET_DIR} ${BUILD_DIR}
 
@@ -18,4 +20,5 @@ docker run -it --rm \
     -v ${BUILD_DIR}:/study_src \
     -e BUILD_RESULT=image.img \
     --entrypoint "" \
+    --cap-add=SYS_PTRACE --security-opt seccomp=unconfined \
     study_x86_builder /bin/bash
