@@ -1,12 +1,11 @@
-OBJECTS = 0.boot.o 1.kernel.o
-
+OBJECTS = exam_C1.o
 
 .SUFFIXES : .asm .o
 .asm.o :
-	nasm -o $@ $^
+    nasm -o $@ $^
 TARGET = ${BUILD_RESULT}
 $(TARGET) : $(OBJECTS)
-	rm $@; cat $^ >> $@
+    rm $@; cat $^ >> $@
 
 clean :
-	rm -rf $(OBJECTS)
+    rm -rf $(OBJECTS)

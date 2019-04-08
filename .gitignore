@@ -4,3 +4,4 @@ dist/
 build/
 *.o
 .DS_Store
+.vscode/
