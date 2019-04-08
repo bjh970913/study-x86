@@ -90,7 +90,7 @@ void ReadSector(int head, int track, int sector, unsigned char *source, unsigned
     }
 }
 
-int FloppyCalirateHead()
+int FloppyCalibrateHead()
 {
     int i;
     char result[2];

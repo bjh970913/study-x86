@@ -7,7 +7,7 @@ extern TSS *tss;
 extern UserRegisters uRegisters[NUM_MAX_TASK];
 extern int CurrentTask;
 void printk(int x, int y, char *str);
-void print_hex(int x, int y, int num);
+volatile void print_hex(int x, int y, int num);
 void interrupt_A();
 void LoadUserPrograms();
 
@@ -71,7 +71,7 @@ void printk(int x, int y, char *str)
     }
 }
 
-void print_hex(int x, int y, int num)
+volatile void print_hex(int x, int y, int num)
 {
     unsigned char vc[9];
     int count;

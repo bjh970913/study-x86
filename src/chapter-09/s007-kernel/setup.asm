@@ -61,7 +61,8 @@ kernel_copy:
     mov edi, PAGE_DIR
     mov eax, 0
     mov ecx, 1024
-    cld rep stosd
+    cld
+    rep stosd
 
     mov edi, PAGE_DIR
     mov eax, 0x103000
@@ -152,7 +153,8 @@ page_low_loop:
 
     lea eax, [tss]
     mov [TSS_WHERE], eax
-    mov esp, esp, 0xC0001FFF
+    
+    mov esp, 0xC0001FFF
 
     jmp 0xC0000000
 

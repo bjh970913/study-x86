@@ -88,7 +88,7 @@ void print_stack()
         ;
 }
 
-void ignorableInterrupt()
+void IgnorableInterrupt()
 {
     char *msg_H_isr_ignore = "This is an ignorable inerrupt";
 

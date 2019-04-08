@@ -1,60 +1,60 @@
 %include "init.inc"
 
-[extern _printk]
-[extern _TimerHandler]
-[extern _schedule]
-[extern _KeyboardHandler]
-[extern _FloppyHandler]
-[extern _print_hex]
-[extern _IgnorableInterrupt]
-[extern _SystemCallEntry]
-[extern _H_isr_00]
-[extern _H_isr_01]
-[extern _H_isr_02]
-[extern _H_isr_03]
-[extern _H_isr_04]
-[extern _H_isr_05]
-[extern _H_isr_06]
-[extern _H_isr_07]
-[extern _H_isr_08]
-[extern _H_isr_09]
-[extern _H_isr_10]
-[extern _H_isr_11]
-[extern _H_isr_12]
-[extern _H_isr_13]
-[extern _H_isr_14]
-[extern _H_isr_15]
-[extern _H_isr_17]
+[extern printk]
+[extern TimerHandler]
+[extern schedule]
+[extern KeyboardHandler]
+[extern FloppyHandler]
+[extern print_hex]
+[extern IgnorableInterrupt]
+[extern SystemCallEntry]
+[extern H_isr_00]
+[extern H_isr_01]
+[extern H_isr_02]
+[extern H_isr_03]
+[extern H_isr_04]
+[extern H_isr_05]
+[extern H_isr_06]
+[extern H_isr_07]
+[extern H_isr_08]
+[extern H_isr_09]
+[extern H_isr_10]
+[extern H_isr_11]
+[extern H_isr_12]
+[extern H_isr_13]
+[extern H_isr_14]
+[extern H_isr_15]
+[extern H_isr_17]
 
 segment .text
 
-[global _LoadIDT]
-[global _EnablePIC]
+[global LoadIDT]
+[global EnablePIC]
 
-[global _isr_ignore]
-[global _isr_32_timer]
-[global _isr_33_keyboard]
-[global _isr_38_floppy]
-[global _isr_128_soft_int]
-[global _isr_00]
-[global _isr_01]
-[global _isr_02]
-[global _isr_03]
-[global _isr_04]
-[global _isr_05]
-[global _isr_06]
-[global _isr_07]
-[global _isr_08]
-[global _isr_09]
-[global _isr_10]
-[global _isr_11]
-[global _isr_12]
-[global _isr_13]
-[global _isr_14]
-[global _isr_15]
-[global _isr_17]
+[global isr_ignore]
+[global isr_32_timer]
+[global isr_33_keyboard]
+[global isr_38_floppy]
+[global isr_128_soft_int]
+[global isr_00]
+[global isr_01]
+[global isr_02]
+[global isr_03]
+[global isr_04]
+[global isr_05]
+[global isr_06]
+[global isr_07]
+[global isr_08]
+[global isr_09]
+[global isr_10]
+[global isr_11]
+[global isr_12]
+[global isr_13]
+[global isr_14]
+[global isr_15]
+[global isr_17]
 
-_LoadIDT:
+LoadIDT:
     push ebp
     mov ebp, esp
 
@@ -63,13 +63,13 @@ _LoadIDT:
     pop ebp
     ret
 
-_EnablePIC:
+EnablePIC:
     mov al, 0xBC
     out 0x21, al
     sti
     ret
 
-_isr_ignore:
+isr_ignore:
     push gs
     push fs
     push es
@@ -85,7 +85,7 @@ _isr_ignore:
     mov al, 0x20
     out 0x20, al
 
-    call _IgnorableInterrupt
+    call IgnorableInterrupt
 
     popad
     pop ds
@@ -95,7 +95,7 @@ _isr_ignore:
 
     iret
 
-_isr_32_timer:
+isr_32_timer:
     push gs
     push fs
     push es
@@ -111,8 +111,8 @@ _isr_32_timer:
     mov al, 0x20
     out 0x20, al
 
-    call _TimerHandler
-    call _schedule
+    call TimerHandler
+    call schedule
 
     popad
     pop ds
@@ -121,7 +121,7 @@ _isr_32_timer:
     pop gs
 
     iret
-_isr_33_keyboard:
+isr_33_keyboard:
     push gs
     push fs
     push es
@@ -141,7 +141,7 @@ _isr_33_keyboard:
     in al, 0x60
 
     push eax
-    call _KeyboardHandler
+    call KeyboardHandler
     add esp, 4
 
     popad
@@ -151,7 +151,7 @@ _isr_33_keyboard:
     pop gs
 
     iret
-_isr_38_floppy:
+isr_38_floppy:
     push gs
     push fs
     push es
@@ -167,7 +167,7 @@ _isr_38_floppy:
     mov al, 0x20
     out 0x20, al
 
-    call _FloppyHandler
+    call FloppyHandler
 
     popad
     pop ds
@@ -176,7 +176,7 @@ _isr_38_floppy:
     pop gs
 
     iret
-_isr_128_soft_int:
+isr_128_soft_int:
     push gs
     push fs
     push es
@@ -191,7 +191,7 @@ _isr_128_soft_int:
     mov GS, ax
     pop eax
 
-    call _SystemCallEntry
+    call SystemCallEntry
 
     popad
     pop ds
@@ -200,7 +200,7 @@ _isr_128_soft_int:
     pop gs
 
     iret
-_isr_00:
+isr_00:
     push gs
     push fs
     push es
@@ -213,7 +213,7 @@ _isr_00:
     mov FS, ax
     mov GS, ax
 
-    call _H_isr_00
+    call H_isr_00
 
     popad
     pop ds
@@ -222,7 +222,7 @@ _isr_00:
     pop gs
 
     iret
-_isr_01:
+isr_01:
     push gs
     push fs
     push es
@@ -235,7 +235,7 @@ _isr_01:
     mov FS, ax
     mov GS, ax
 
-    call _H_isr_01
+    call H_isr_01
 
     popad
     pop ds
@@ -244,7 +244,7 @@ _isr_01:
     pop gs
 
     iret
-_isr_02:
+isr_02:
     push gs
     push fs
     push es
@@ -257,7 +257,7 @@ _isr_02:
     mov FS, ax
     mov GS, ax
 
-    call _H_isr_02
+    call H_isr_02
 
     popad
     pop ds
@@ -266,7 +266,7 @@ _isr_02:
     pop gs
 
     iret
-_isr_03:
+isr_03:
     push gs
     push fs
     push es
@@ -279,7 +279,7 @@ _isr_03:
     mov FS, ax
     mov GS, ax
 
-    call _H_isr_03
+    call H_isr_03
 
     popad
     pop ds
@@ -288,7 +288,7 @@ _isr_03:
     pop gs
 
     iret
-_isr_04:
+isr_04:
     push gs
     push fs
     push es
@@ -301,7 +301,7 @@ _isr_04:
     mov FS, ax
     mov GS, ax
 
-    call _H_isr_04
+    call H_isr_04
 
     popad
     pop ds
@@ -310,7 +310,7 @@ _isr_04:
     pop gs
 
     iret
-_isr_05:
+isr_05:
     push gs
     push fs
     push es
@@ -323,7 +323,7 @@ _isr_05:
     mov FS, ax
     mov GS, ax
 
-    call _H_isr_05
+    call H_isr_05
 
     popad
     pop ds
@@ -332,7 +332,7 @@ _isr_05:
     pop gs
 
     iret
-_isr_06:
+isr_06:
     push gs
     push fs
     push es
@@ -345,7 +345,7 @@ _isr_06:
     mov FS, ax
     mov GS, ax
 
-    call _H_isr_06
+    call H_isr_06
 
     popad
     pop ds
@@ -354,7 +354,7 @@ _isr_06:
     pop gs
 
     iret
-_isr_07:
+isr_07:
     push gs
     push fs
     push es
@@ -367,7 +367,7 @@ _isr_07:
     mov FS, ax
     mov GS, ax
 
-    call _H_isr_07
+    call H_isr_07
 
     popad
     pop ds
@@ -376,7 +376,7 @@ _isr_07:
     pop gs
 
     iret
-_isr_08:
+isr_08:
     push gs
     push fs
     push es
@@ -389,7 +389,7 @@ _isr_08:
     mov FS, ax
     mov GS, ax
 
-    call _H_isr_08
+    call H_isr_08
 
     popad
     pop ds
@@ -398,7 +398,7 @@ _isr_08:
     pop gs
 
     iret
-_isr_09:
+isr_09:
     push gs
     push fs
     push es
@@ -411,7 +411,7 @@ _isr_09:
     mov FS, ax
     mov GS, ax
 
-    call _H_isr_09
+    call H_isr_09
 
     popad
     pop ds
@@ -420,7 +420,7 @@ _isr_09:
     pop gs
 
     iret
-_isr_10:
+isr_10:
     push gs
     push fs
     push es
@@ -433,7 +433,7 @@ _isr_10:
     mov FS, ax
     mov GS, ax
 
-    call _H_isr_10
+    call H_isr_10
 
     popad
     pop ds
@@ -442,7 +442,7 @@ _isr_10:
     pop gs
 
     iret
-_isr_11:
+isr_11:
     push gs
     push fs
     push es
@@ -455,7 +455,7 @@ _isr_11:
     mov FS, ax
     mov GS, ax
 
-    call _H_isr_11
+    call H_isr_11
 
     popad
     pop ds
@@ -464,7 +464,7 @@ _isr_11:
     pop gs
 
     iret
-_isr_12:
+isr_12:
     push gs
     push fs
     push es
@@ -477,7 +477,7 @@ _isr_12:
     mov FS, ax
     mov GS, ax
 
-    call _H_isr_12
+    call H_isr_12
 
     popad
     pop ds
@@ -486,7 +486,7 @@ _isr_12:
     pop gs
 
     iret
-_isr_13:
+isr_13:
     push gs
     push fs
     push es
@@ -499,7 +499,7 @@ _isr_13:
     mov FS, ax
     mov GS, ax
 
-    call _H_isr_13
+    call H_isr_13
 
     popad
     pop ds
@@ -508,7 +508,7 @@ _isr_13:
     pop gs
 
     iret
-_isr_14:
+isr_14:
     push gs
     push fs
     push es
@@ -521,7 +521,7 @@ _isr_14:
     mov FS, ax
     mov GS, ax
 
-    call _H_isr_14
+    call H_isr_14
 
     popad
     pop ds
@@ -530,7 +530,7 @@ _isr_14:
     pop gs
 
     iret
-_isr_15:
+isr_15:
     push gs
     push fs
     push es
@@ -543,7 +543,7 @@ _isr_15:
     mov FS, ax
     mov GS, ax
 
-    call _H_isr_15
+    call H_isr_15
 
     popad
     pop ds
@@ -552,7 +552,7 @@ _isr_15:
     pop gs
 
     iret
-_isr_17:
+isr_17:
     push gs
     push fs
     push es
@@ -565,7 +565,7 @@ _isr_17:
     mov FS, ax
     mov GS, ax
 
-    call _H_isr_17
+    call H_isr_17
 
     popad
     pop ds

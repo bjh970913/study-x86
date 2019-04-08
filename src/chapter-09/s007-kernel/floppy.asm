@@ -1,13 +1,14 @@
 segment .text
 
-[global _FloppyMotorOn]
-[global _FloppyMotorOff]
-[global _initializeDMA]
-[global _FloppyCode]
-[global _ResultPhase]
-[global _inb]
+[global FloppyMotorOn]
+[global FloppyMotorOff]
+[global initializeDMA]
+[global FloppyCode]
+[global ResultPhase]
+[global inb]
+[global outb]
 
-_FloppyMotorOn:
+FloppyMotorOn:
     push edx
     push eax
     
@@ -19,7 +20,7 @@ _FloppyMotorOn:
     pop edx
     ret
 
-_FloppyMotorOff:
+FloppyMotorOff:
     push edx
     push eax
     
@@ -31,7 +32,7 @@ _FloppyMotorOff:
     pop edx
     ret
 
-_initializeDMA:
+initializeDMA:
     push ebp
     mov ebp, esp
 
@@ -69,7 +70,7 @@ _initializeDMA:
     mov al, 0x02
     out 0x0a, al
 
-    out al, 10
+    mov al, 0x10
     out 0x08, al
 
     pop eax
@@ -78,14 +79,14 @@ _initializeDMA:
     pop ebp
     ret
 
-_inb:
+inb:
     push ebp
     mov ebp, esp
 
     push edx
 
     xor eax, eax
-    mov edx, dwrod [ebp+0x08]
+    mov edx, dword [ebp+0x08]
     in al, dx
 
     pop edx
@@ -94,7 +95,7 @@ _inb:
     pop ebp
     ret
 
-_outb:
+outb:
     push ebp
     mov ebp, esp
 
@@ -113,7 +114,7 @@ _outb:
     pop ebp
     ret
 
-_ResultPhase:
+ResultPhase:
     push edx
 
     mov dx, 0x3f5

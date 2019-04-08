@@ -1,6 +1,6 @@
 #include "print_string.h"
 
-void print_stirng(int x, int y, char *str)
+void print_string(int x, int y, char *str)
 {
     __asm__ __volatile__(
         "push %%eax               \n\t"

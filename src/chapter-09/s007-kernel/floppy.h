@@ -6,3 +6,4 @@ void FloppyCode(unsigned int code);
 void ReadSector(int head, int track, int sector, unsigned char *src, unsigned char *dest);
 int FloppySeek(int haed, int cylinder);
 void FloppyHandler();
+int FloppyCalibrateHead();

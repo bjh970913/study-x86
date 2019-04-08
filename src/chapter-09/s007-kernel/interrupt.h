@@ -1,4 +1,4 @@
-#define IDT_BASE            0xC0001000
+#define IDT_BASE            0xC0002000
 #define KERNEL_OFFSET       0xC0000000
 #define SysCodeSelector     0x08
 
