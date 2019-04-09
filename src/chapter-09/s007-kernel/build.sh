@@ -6,7 +6,8 @@ nasm -f bin -o boot.bin boot.asm
 nasm -f bin -o setup.bin setup.asm -l list_setup.txt
 nasm -f coff -o interrupt_asm.o interrupt.asm
 
-GCC="gcc -fno-stack-protector -Wall -fPIE -m32 -c"
+GCC="gcc -fno-stack-protector -w -fPIE -m32 -c"
+# GCC="gcc -fno-stack-protector -Wall -fPIE -m32 -c"
 LD="ld -m elf_i386"
 
 ${GCC} -o kernel.o kernel.c
@@ -47,3 +48,8 @@ cat boot.bin \
     user_program2.bin \
     user_program3.bin \
     user_program4.bin > ./image.img
+
+SIZE=$(wc -c < ./image.img)
+MOD=$(($SIZE % 512))
+PADDING_SIZE=$((512-$MOD))
+printf %0${PADDING_SIZE}d 0 >> ./image.img

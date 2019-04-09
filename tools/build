@@ -16,10 +16,8 @@ require pre_docker.sh
 
 rm -rf build
 
-env
-
 cp -r ${TARGET_DIR} ${BUILD_DIR}
-
+sleep 1
 docker run -it --rm -v ${BUILD_DIR}:/study_src -e BUILD_RESULT=image.img study_x86_builder /bin/sh
 
 if [ ! -f ${BUILD_RESULT} ]; then
@@ -36,3 +34,4 @@ VBoxManage controlvm ${VBOX_ENV_NAME} poweroff
 sleep 1
 
 VBoxManage startvm ${VBOX_ENV_NAME}
+# VirtualBoxVM --startvm ${VBOX_ENV_NAME} --dbg
