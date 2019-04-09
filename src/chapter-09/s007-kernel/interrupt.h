@@ -2,32 +2,32 @@
 #define KERNEL_OFFSET       0xC0000000
 #define SysCodeSelector     0x08
 
-void LoadIDT();
-void EnablePIC();
 void print_stack();
 
-void isr_32_timer();
-void isr_33_keyboard();
-void isr_38_floppy();
-void isr_ignore();
-void isr_128_soft_int();
-void isr_00();
-void isr_01();
-void isr_02();
-void isr_03();
-void isr_04();
-void isr_05();
-void isr_06();
-void isr_07();
-void isr_08();
-void isr_09();
-void isr_10();
-void isr_11();
-void isr_12();
-void isr_13();
-void isr_14();
-void isr_15();
-void isr_17();
+extern void LoadIDT();
+extern void EnablePIC();
+extern void isr_ignore();
+extern void isr_32_timer();
+extern void isr_33_keyboard();
+extern void isr_38_floppy();
+extern void isr_128_soft_int();
+extern void (*isr_00(void))();
+extern void isr_01();
+extern void isr_02();
+extern void isr_03();
+extern void isr_04();
+extern void isr_05();
+extern void isr_06();
+extern void isr_07();
+extern void isr_08();
+extern void isr_09();
+extern void isr_10();
+extern void isr_11();
+extern void isr_12();
+extern void isr_13();
+extern void isr_14();
+extern void isr_15();
+extern void isr_17();
 
 void SetInterrupts();
 void PutIDT(int num, void *handler, unsigned char access);

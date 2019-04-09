@@ -8,37 +8,58 @@ int TimePastBoot;
 
 void SetInterrupts()
 {
+    void (*_isr_ignore)() = isr_ignore;
+    void (*_isr_00)() = isr_00;
+    void (*_isr_01)() = isr_01;
+    void (*_isr_02)() = isr_02;
+    void (*_isr_03)() = isr_03;
+    void (*_isr_04)() = isr_04;
+    void (*_isr_05)() = isr_05;
+    void (*_isr_06)() = isr_06;
+    void (*_isr_07)() = isr_07;
+    void (*_isr_08)() = isr_08;
+    void (*_isr_09)() = isr_09;
+    void (*_isr_10)() = isr_10;
+    void (*_isr_11)() = isr_11;
+    void (*_isr_12)() = isr_12;
+    void (*_isr_13)() = isr_13;
+    void (*_isr_14)() = isr_14;
+    void (*_isr_15)() = isr_15;
+    void (*_isr_17)() = isr_17;
+    void (*_isr_32_timer)() = isr_32_timer;
+    void (*_isr_33_keyboard)() = isr_33_keyboard;
+    void (*_isr_38_floppy)() = isr_38_floppy;
+    void (*_isr_128_soft_int)() = isr_128_soft_int;
+
     int i;
     TimePastBoot = 0;
     for (i = 0; i < 256; i++)
     {
-        PutIDT(i, (void *)isr_ignore, 0x8E);
+        PutIDT(i, (void *)_isr_ignore, 0x8E);
     }
 
-    LoadIDT();
+    PutIDT(0x00, (void *)_isr_00, 0x8E);
+    PutIDT(0x01, (void *)_isr_01, 0x8E);
+    PutIDT(0x02, (void *)_isr_02, 0x8E);
+    PutIDT(0x03, (void *)_isr_03, 0x8E);
+    PutIDT(0x04, (void *)_isr_04, 0x8E);
+    PutIDT(0x05, (void *)_isr_05, 0x8E);
+    PutIDT(0x06, (void *)_isr_06, 0x8E);
+    PutIDT(0x07, (void *)_isr_07, 0x8E);
+    PutIDT(0x08, (void *)_isr_08, 0x8E);
+    PutIDT(0x09, (void *)_isr_09, 0x8E);
+    PutIDT(0x0a, (void *)_isr_10, 0x8E);
+    PutIDT(0x0b, (void *)_isr_11, 0x8E);
+    PutIDT(0x0c, (void *)_isr_12, 0x8E);
+    PutIDT(0x0d, (void *)_isr_13, 0x8E);
+    PutIDT(0x0e, (void *)_isr_14, 0x8E);
+    PutIDT(0x0f, (void *)_isr_15, 0x8E);
+    PutIDT(0x10, (void *)_isr_17, 0x8E);
 
-    PutIDT(0x00, (void *)isr_00, 0x8E);
-    PutIDT(0x01, (void *)isr_01, 0x8E);
-    PutIDT(0x02, (void *)isr_02, 0x8E);
-    PutIDT(0x03, (void *)isr_03, 0x8E);
-    PutIDT(0x04, (void *)isr_04, 0x8E);
-    PutIDT(0x05, (void *)isr_05, 0x8E);
-    PutIDT(0x06, (void *)isr_06, 0x8E);
-    PutIDT(0x07, (void *)isr_07, 0x8E);
-    PutIDT(0x08, (void *)isr_08, 0x8E);
-    PutIDT(0x09, (void *)isr_09, 0x8E);
-    PutIDT(0x0a, (void *)isr_10, 0x8E);
-    PutIDT(0x0b, (void *)isr_11, 0x8E);
-    PutIDT(0x0c, (void *)isr_12, 0x8E);
-    PutIDT(0x0d, (void *)isr_13, 0x8E);
-    PutIDT(0x0e, (void *)isr_14, 0x8E);
-    PutIDT(0x0f, (void *)isr_15, 0x8E);
-    PutIDT(0x10, (void *)isr_17, 0x8E);
-
-    PutIDT(0x20, (void *)isr_32_timer, 0x8E);
-    PutIDT(0x21, (void *)isr_33_keyboard, 0x8E);
-    PutIDT(0x26, (void *)isr_38_floppy, 0x8E);
-    PutIDT(0x80, (void *)isr_128_soft_int, 0xEE);
+    PutIDT(0x20, (void *)_isr_32_timer, 0x8E);
+    PutIDT(0x21, (void *)_isr_33_keyboard, 0x8E);
+    PutIDT(0x26, (void *)_isr_38_floppy, 0x8E);
+    PutIDT(0x80, (void *)_isr_128_soft_int, 0xEE);
 
     LoadIDT();
 
@@ -76,7 +97,7 @@ void print_stack()
         "pop %%ebp          \n\t"
         "mov %%esp, %0      \n\t"
         "mov %%ebp, %1      \n\t"
-        
+
         "mov %%eax, %%ebp   \n\t"
         "mov %%ebx, %%esp   \n\t"
         "pop %%ebx          \n\t"
@@ -135,11 +156,11 @@ void delay(int TenMillisecond)
     }
 }
 
-void KeyboardHandler(/*char scan*/)
+void KeyboardHandler(char scan)
 {
     char *s = "Scan Code: ";
     printk(20, 0, s);
-    // print_hex(31, 0, (scan & 0xFF));
+    print_hex(31, 0, (scan & 0xFF));
     trap = 0;
 }
 

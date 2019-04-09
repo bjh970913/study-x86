@@ -1,5 +1,8 @@
 %include "init.inc"
 
+segment .text
+section .text
+
 [extern printk]
 [extern TimerHandler]
 [extern schedule]
@@ -25,8 +28,6 @@
 [extern H_isr_14]
 [extern H_isr_15]
 [extern H_isr_17]
-
-segment .text
 
 [global LoadIDT]
 [global EnablePIC]
@@ -68,7 +69,7 @@ LoadIDT:
 
 EnablePIC:
     mov al, 0xBC ;  1011 1100
-    mov al, 0xBD ;  1111 1101 ; 키보드만
+    ; mov al, 0xBD ;  1111 1101 ; 키보드만
     out 0x21, al
     sti
     ret
@@ -100,7 +101,6 @@ isr_ignore:
     iret
 
 isr_32_timer:
-jmp $
     push gs
     push fs
     push es
@@ -145,10 +145,9 @@ isr_33_keyboard:
     xor eax, eax
     in al, 0x60
 
-    ; push eax
+    push eax
     call KeyboardHandler
-    ; add esp, 0x08
-    jmp 0
+    add esp, 0x04
 
     popad
     pop ds
@@ -158,7 +157,6 @@ isr_33_keyboard:
     
     iret
 isr_38_floppy:
-jmp $
     push gs
     push fs
     push es

@@ -11,29 +11,14 @@ void printk(int x, int y, char *str);
 volatile void print_hex(int x, int y, int num);
 void interrupt_A();
 void LoadUserPrograms();
-typedef struct _IDTR
-{
-    unsigned int limit;
-    unsigned int link;
-} IDTR;
 
-IDTR temp;
 void start_kernel()
 {
     char *kernel_msg = ".Kernel is running";
     unsigned int *FirstTaskURegisters = (unsigned int *)&(uRegisters[0]);
     init_task();
     
-    temp.limit = (unsigned short)0xffffffff;
-    temp.link = 0xffffffff;
-    print_hex(0, 11, (int)temp.limit);
-    print_hex(0, 12, temp.link);
-    
     SetInterrupts();
-
-    __asm__ __volatile__("sidt %0":"=m"(temp) :);
-    print_hex(0, 13, temp.limit);
-    print_hex(0, 14, temp.link);
 
 // int  v = 1;
 //     while (v) {
