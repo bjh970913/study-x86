@@ -33,7 +33,7 @@ start:
     jmp $+2
     nop
     nop
-    
+
     jmp dword SysCodeSelector:PM_Start
 
 [bits 32]
@@ -100,9 +100,13 @@ kernel_copy:
     or eax, 1
     mov [es:edi], eax
 
-    mov edi, PAGE_TAB_USER
+    mov edi, PAGE_TAB_KERNEL+0x003*4
+    mov eax, 0x203000
+    or eax, 1
+    mov [es:edi], eax
 
-    mov eax, 0x00
+    mov edi, PAGE_TAB_USER
+    mov eax, 0
     mov ecx, 1024
     cld
     rep stosd
@@ -153,7 +157,7 @@ page_low_loop:
 
     lea eax, [tss]
     mov [TSS_WHERE], eax
-    
+
     mov esp, 0xC0001FFF
 
     jmp 0xC0000000
