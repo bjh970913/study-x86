@@ -4,7 +4,7 @@ source $(dirname "$0")/env.sh
 
 mkdir -p ${BUILD_DIR}
 
-if [ $# != 1 ]; then
+if [ $# == 0 ]; then
     echo "Usage $0 [target dir]"
     exit 1
 else
@@ -33,5 +33,9 @@ VBoxManage controlvm ${VBOX_ENV_NAME} poweroff
 
 sleep 1
 
-VBoxManage startvm ${VBOX_ENV_NAME}
-# VirtualBoxVM --startvm ${VBOX_ENV_NAME} --dbg
+if [ $# != 1 ]; then
+    VirtualBoxVM --startvm ${VBOX_ENV_NAME} --dbg
+else
+    VBoxManage startvm ${VBOX_ENV_NAME}
+fi
+

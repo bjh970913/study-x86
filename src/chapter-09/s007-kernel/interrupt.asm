@@ -58,13 +58,17 @@ LoadIDT:
     push ebp
     mov ebp, esp
 
+    mov [idtr], word 256*8-1
+    mov [idtr_addr], dword IDT_BASE
+
     lidt [idtr]
 
     pop ebp
     ret
 
 EnablePIC:
-    mov al, 0xBC
+    mov al, 0xBC ;  1011 1100
+    mov al, 0xBD ;  1111 1101 ; 키보드만
     out 0x21, al
     sti
     ret
@@ -96,6 +100,7 @@ isr_ignore:
     iret
 
 isr_32_timer:
+jmp $
     push gs
     push fs
     push es
@@ -128,11 +133,11 @@ isr_33_keyboard:
     push ds
     pushad
 
-    mov ax, SysDataSelector
-    mov DS, ax
-    mov ES, ax
-    mov FS, ax
-    mov GS, ax
+    mov cx, SysDataSelector
+    mov DS, cx
+    mov ES, cx
+    mov FS, cx
+    mov GS, cx
 
     mov al, 0x20
     out 0x20, al
@@ -140,18 +145,20 @@ isr_33_keyboard:
     xor eax, eax
     in al, 0x60
 
-    push eax
+    ; push eax
     call KeyboardHandler
-    add esp, 4
+    ; add esp, 0x08
+    jmp 0
 
     popad
     pop ds
     pop es
     pop fs
     pop gs
-
+    
     iret
 isr_38_floppy:
+jmp $
     push gs
     push fs
     push es
@@ -177,6 +184,7 @@ isr_38_floppy:
 
     iret
 isr_128_soft_int:
+jmp $
     push gs
     push fs
     push es
@@ -579,4 +587,5 @@ segment .data
 
 idtr:
     dw 256*8-1
+idtr_addr:
     dd IDT_BASE

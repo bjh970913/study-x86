@@ -2,6 +2,7 @@
 #include "process.h"
 #include "interrupt.h"
 #include "floppy.h"
+#include "print_string.h"
 
 extern TSS *tss;
 extern UserRegisters uRegisters[NUM_MAX_TASK];
@@ -10,14 +11,37 @@ void printk(int x, int y, char *str);
 volatile void print_hex(int x, int y, int num);
 void interrupt_A();
 void LoadUserPrograms();
+typedef struct _IDTR
+{
+    unsigned int limit;
+    unsigned int link;
+} IDTR;
 
+IDTR temp;
 void start_kernel()
 {
+    char *kernel_msg = ".Kernel is running";
     unsigned int *FirstTaskURegisters = (unsigned int *)&(uRegisters[0]);
-
     init_task();
+    
+    temp.limit = (unsigned short)0xffffffff;
+    temp.link = 0xffffffff;
+    print_hex(0, 11, (int)temp.limit);
+    print_hex(0, 12, temp.link);
+    
     SetInterrupts();
 
+    __asm__ __volatile__("sidt %0":"=m"(temp) :);
+    print_hex(0, 13, temp.limit);
+    print_hex(0, 14, temp.link);
+
+// int  v = 1;
+//     while (v) {
+//         v = 0;
+//         v = 1;
+//         printk(0, 0, kernel_msg);
+//         kernel_msg[0]++;
+//     }
     LoadUserPrograms();
 
     __asm__ __volatile__(
@@ -59,13 +83,13 @@ void printk(int x, int y, char *str)
         return;
     }
 
-    unsigned char *p = (unsigned char *)0xB800 + x + 2 + 80 * y * 2;
+    unsigned char *p = (unsigned char *)0xB8000 + (x*2) + 80 * y * 2;
 
     while (*str != 0)
     {
         *p = *str;
         p++;
-        *p = 0x06;
+        *p = 0x67;
         p++;
         str++;
     }

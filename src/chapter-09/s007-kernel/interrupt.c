@@ -12,8 +12,10 @@ void SetInterrupts()
     TimePastBoot = 0;
     for (i = 0; i < 256; i++)
     {
-        PutIDT(i, (void *)&isr_ignore, 0x8E);
+        PutIDT(i, (void *)isr_ignore, 0x8E);
     }
+
+    LoadIDT();
 
     PutIDT(0x00, (void *)isr_00, 0x8E);
     PutIDT(0x01, (void *)isr_01, 0x8E);
@@ -65,10 +67,20 @@ void print_stack()
     int i;
 
     __asm__ __volatile__(
+        "push %%eax         \n\t"
+        "push %%ebx         \n\t"
+        "mov %%ebp, %%eax   \n\t"
+        "mov %%esp, %%ebx   \n\t"
+
         "mov %%ebp, %%esp   \n\t"
         "pop %%ebp          \n\t"
         "mov %%esp, %0      \n\t"
         "mov %%ebp, %1      \n\t"
+        
+        "mov %%eax, %%ebp   \n\t"
+        "mov %%ebx, %%esp   \n\t"
+        "pop %%ebx          \n\t"
+        "pop %%eax          \n\t"
         : "=m"(esp_A), "=m"(ebp_A)
         :);
 
@@ -84,8 +96,6 @@ void print_stack()
     {
         print_hex(40, i, ebp_A[i]);
     }
-    while (1)
-        ;
 }
 
 void IgnorableInterrupt()
@@ -125,11 +135,11 @@ void delay(int TenMillisecond)
     }
 }
 
-void KeyboardHandler(char scan)
+void KeyboardHandler(/*char scan*/)
 {
     char *s = "Scan Code: ";
     printk(20, 0, s);
-    print_hex(31, 0, (scan & 0xFF));
+    // print_hex(31, 0, (scan & 0xFF));
     trap = 0;
 }
 

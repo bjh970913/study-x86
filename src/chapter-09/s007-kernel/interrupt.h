@@ -34,7 +34,7 @@ void PutIDT(int num, void *handler, unsigned char access);
 void TimerHandler();
 void FloppyHandler();
 void printk(int x, int y, char*str);
-void print_hex(int x, int y, int num);
+volatile void print_hex(int x, int y, int num);
 void delay(int TenMillisecond);
 
 typedef struct _IDT_Desc

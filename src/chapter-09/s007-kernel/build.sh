@@ -4,9 +4,9 @@ export LDFLAGS=-lssp_nonshared
 
 nasm -f bin -o boot.bin boot.asm
 nasm -f bin -o setup.bin setup.asm -l list_setup.txt
-nasm -f coff -o interrupt_asm.o interrupt.asm
+nasm -f elf -o interrupt_asm.o interrupt.asm
 
-GCC="gcc -fno-stack-protector -w -fPIE -m32 -c"
+GCC="gcc -fno-stack-protector -w -fPIE -m32 -c -O0 -fno-plt -fno-pic"
 # GCC="gcc -fno-stack-protector -Wall -fPIE -m32 -c"
 LD="ld -m elf_i386"
 
@@ -14,7 +14,7 @@ ${GCC} -o kernel.o kernel.c
 ${GCC} -o interrupt.o interrupt.c
 ${GCC} -o process.o process.c
 
-nasm -f coff -o floppy_asm.o floppy.asm
+nasm -f elf -o floppy_asm.o floppy.asm
 
 ${GCC} -o floppy.o floppy.c
 
