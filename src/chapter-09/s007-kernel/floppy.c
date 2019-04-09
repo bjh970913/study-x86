@@ -40,12 +40,19 @@ void ReadSector(int head, int track, int sector, unsigned char *source, unsigned
     FloppyMotorOn();
     delay(20);
 
-    for (i = 0; i < 5; i++)
+    // for (i = 0; i < 5; i++)
+    i=0;
+    while(1)
     {
-        if (!FloppyCalibrateHead())
-        {
-            continue;
-        }
+        delay(20);
+        printk(0, 3, "Floppy read atempt :   ");
+        print_hex(23, 3, i++);
+        // if (!FloppyCalibrateHead())
+        // {
+        //     printk(0, 3, "calibrate fail           ");
+        //     continue;
+        // }
+        // printk(0, 3, "calibrate ok           ");
         if (!FloppySeek(head, track))
         {
             continue;
@@ -55,6 +62,8 @@ void ReadSector(int head, int track, int sector, unsigned char *source, unsigned
             break;
         }
     }
+
+    printk(0, 3, "Floppy seek ok     ");
 
     initializeDMA(page, offsset);
 

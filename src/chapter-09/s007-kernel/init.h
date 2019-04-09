@@ -8,5 +8,5 @@
 #define IDT_BASE            0xC0002000
 #define TSS_WHERE           0x90000
 #ifndef NUM_MAX_TASK
-#define NUM_MAX_TASK        5
+#define NUM_MAX_TASK        4
 #endif

@@ -26,6 +26,8 @@ void init_task()
         uRegisters[i].es = UserDataSelector;
         uRegisters[i].fs = UserDataSelector;
         uRegisters[i].gs = UserDataSelector;
+
+        eip += 0x1000;
     }
 
     CurrentTask = 0;
@@ -33,6 +35,10 @@ void init_task()
 
 void schedule()
 {
+    char *msg = ". scheduler running";
+    printk(0, 1, msg);
+    msg[0]++;
+    print_hex(20, 1, CurrentTask);
     static unsigned int *ebp_A;
     static int NextTask;
     static unsigned int *CurrentTaskURegisters;
@@ -45,6 +51,7 @@ void schedule()
         "mov %%ebp, %0"
         : "=m"(ebp_A)
         :);
+    print_hex(31, 1, (ebp_A[15] & 0x00000003));
     if ((ebp_A[15] & 0x00000003) == 0)
     {
         return;
