@@ -25,18 +25,17 @@ if [ ! -f ${BUILD_RESULT} ]; then
     exit 1
 fi
 
-# VBoxManage storageattach ${VBOX_ENV_NAME} \
-#     --storagectl Floppy --device 0 --port 0 --port 0 \
-#     --medium ${BUILD_RESULT}
+VBoxManage storageattach ${VBOX_ENV_NAME} \
+    --storagectl Floppy --device 0 --port 0 --port 0 \
+    --medium ${BUILD_RESULT}
 
-# VBoxManage controlvm ${VBOX_ENV_NAME} poweroff
+VBoxManage controlvm ${VBOX_ENV_NAME} poweroff
 
-# sleep 1
+sleep 1
 
-# if [ $# != 1 ]; then
-#     VirtualBoxVM --startvm ${VBOX_ENV_NAME} --dbg
-# else
-#     VBoxManage startvm ${VBOX_ENV_NAME}
-# fi
+if [ $# != 1 ]; then
+    VirtualBoxVM --startvm ${VBOX_ENV_NAME} --dbg
+else
+    VBoxManage startvm ${VBOX_ENV_NAME}
+fi
 
-qemu-system-i386 -fda ${BUILD_RESULT}
