@@ -11,7 +11,7 @@ else
     TARGET_DIR=$1
 fi
 
-require pre_vbox.sh
+#require pre_vbox.sh
 require pre_docker.sh
 
 rm -rf build
