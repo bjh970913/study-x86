@@ -1,8 +1,8 @@
 FROM ubuntu:18.04
 
-RUN apt update && \
-    apt upgrade -y && \
-    apt install gcc make nasm gcc-multilib gdb -y
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install gcc make nasm gcc-multilib gdb -y
 
 COPY build.sh /build.sh
 
