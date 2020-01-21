@@ -18,7 +18,7 @@ rm -rf build
 
 cp -r ${TARGET_DIR} ${BUILD_DIR}
 sleep 1
-docker run -it --rm -v ${BUILD_DIR}:/study_src -e BUILD_RESULT=image.img study_x86_builder /bin/sh
+docker run -it --rm -v ${BUILD_DIR}:/study_src -e BUILD_RESULT=image.img study_x86_builder
 
 if [ ! -f ${BUILD_RESULT} ]; then
     echo "Build image not found. Check makefile"
@@ -39,4 +39,5 @@ fi
 #     VBoxManage startvm ${VBOX_ENV_NAME}
 # fi
 
-qemu-system-i386 -fda ${BUILD_RESULT}
+# qemu-system-i386 -fda ${BUILD_RESULT}
+qemu-system-i386 -drive file=${BUILD_RESULT},format=raw,index=0,media=disk
